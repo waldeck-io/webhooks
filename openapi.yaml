@@ -1,0 +1,158 @@
+openapi: 3.1.0
+info:
+  title: "Webhooks API"
+  version: "1.0.0"
+  contact:
+    name: Support
+    email: support@waldeck.io
+    url: https://www.webhooksapi.com
+servers:
+  - url: https://api.schedulingapi.com/v1
+paths:
+  /messages:
+    post:
+      tags: [Messages]
+      summary: Create new message
+      responses:
+        '400':
+          $ref: '#/components/responses/400'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/singleMessageResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createMessage'
+    get:
+      tags: [Messages]
+      summary: Retreive messages
+      responses:
+        '200': 
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/singleMessageResponse'
+  /messages/{id}:
+    get:
+      tags: [Messages]
+      summary: Retreive single message
+      responses:
+        '200': 
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/singleMessageResponse'
+  /applications:
+    get:
+      tags: [Applications]
+      summary: Retreive applications
+      responses:
+        '200': 
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/singleApplicationResponse'
+    post:
+      tags: [Applications]
+      summary: Create new application
+      responses:
+        '400':
+          $ref: '#/components/responses/400'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/singleApplicationResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createApplication'
+  /applications/{id}:
+    get:
+      tags: [Applications]
+      summary: Retreive single application
+      responses:
+        '200': 
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/singleApplicationResponse'
+components:
+  responses:
+    '400':
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Request validation failed
+              invalidParams:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: callbackUrl
+                  reason:
+                    type: string
+                    example: Invalid URI format
+  schemas:
+    createMessage:
+      type: object
+      properties:
+        eventType:
+          type: string
+        applicationId:
+          type: uuid
+        payload:
+          type: object
+          example: {'key': 'value'}
+    singleMessageResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+        applicationId:
+          type: uuid
+        payload:
+          type: object
+        createdAt:
+          type: date-time
+    createApplication:
+      type: object
+      properties:
+        name:
+          type: string
+        uid:
+          type: string
+    singleApplicationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        uid:
+          type: string
